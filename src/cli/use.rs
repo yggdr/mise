@@ -94,7 +94,6 @@ impl Use {
             })
             .collect::<Result<Vec<_>>>()?;
         ts.install_versions(
-            config,
             versions.clone(),
             &mpr,
             &InstallOptions {

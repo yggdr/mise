@@ -50,6 +50,7 @@ mod hash;
 mod hook_env;
 mod http;
 mod install_context;
+mod installer;
 mod lock_file;
 mod logger;
 mod migrate;

@@ -94,7 +94,7 @@ impl Upgrade {
             raw: self.raw,
             latest_versions: true,
         };
-        ts.install_versions(config, new_versions, &mpr, &opts)?;
+        ts.install_versions(new_versions, &mpr, &opts)?;
         for (tool, tv) in to_remove {
             let prefix = format!("{}", style(&tv).cyan().for_stderr());
             let pr = mpr.add(&prefix);

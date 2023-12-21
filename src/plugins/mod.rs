@@ -18,6 +18,7 @@ pub use script_manager::{Script, ScriptManager};
 use crate::config::{Config, Settings};
 use crate::file::{display_path, remove_all, remove_all_with_warning};
 use crate::install_context::InstallContext;
+use crate::installer::Installer;
 use crate::lock_file::LockFile;
 use crate::runtime_symlinks::is_runtime_symlink;
 use crate::toolset::{ToolVersion, ToolVersionRequest, Toolset};
@@ -177,7 +178,7 @@ pub trait Plugin: Debug + Send + Sync {
     fn execute_external_command(&self, _command: &str, _args: Vec<String>) -> Result<()> {
         unimplemented!()
     }
-    fn install_version(&self, ctx: InstallContext) -> Result<()> {
+    fn install_version(&self, ctx: &Installer) -> Result<()> {
         let config = Config::get();
         let settings = Settings::try_get()?;
         if self.is_version_installed(&ctx.tv) {

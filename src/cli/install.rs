@@ -61,7 +61,7 @@ impl Install {
             warn!("specify a version with `rtx install <PLUGIN>@<VERSION>`");
             return Ok(());
         }
-        ts.install_versions(config, tool_versions, &mpr, &self.install_opts())
+        ts.install_versions(tool_versions, &mpr, &self.install_opts())
     }
 
     fn install_opts(&self) -> InstallOptions {
@@ -127,7 +127,7 @@ impl Install {
             return Ok(());
         }
         let mpr = MultiProgressReport::new();
-        ts.install_versions(config, versions, &mpr, &self.install_opts())?;
+        ts.install_versions(versions, &mpr, &self.install_opts())?;
         Ok(())
     }
 }

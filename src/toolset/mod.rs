@@ -19,6 +19,7 @@ pub use tool_version_request::ToolVersionRequest;
 use crate::config::{Config, Settings};
 use crate::env;
 use crate::install_context::InstallContext;
+use crate::installer::Installer;
 use crate::path_env::PathEnv;
 use crate::plugins::{Plugin, PluginName};
 use crate::runtime_symlinks;
@@ -91,7 +92,7 @@ impl Toolset {
             .par_iter_mut()
             .for_each(|(_, v)| v.resolve(config, false));
     }
-    pub fn install_arg_versions(&mut self, config: &Config, opts: &InstallOptions) -> Result<()> {
+    pub fn install_arg_versions(&mut self, opts: &InstallOptions) -> Result<()> {
         let mpr = MultiProgressReport::new();
         let versions = self
             .list_current_versions()
@@ -100,7 +101,7 @@ impl Toolset {
             .map(|(_, tv)| tv)
             .filter(|tv| matches!(self.versions[&tv.plugin_name].source, ToolSource::Argument))
             .collect_vec();
-        self.install_versions(config, versions, &mpr, opts)
+        self.install_versions(versions, &mpr, opts)
     }
 
     pub fn list_missing_plugins(&self, config: &Config) -> Vec<PluginName> {
@@ -114,67 +115,11 @@ impl Toolset {
 
     pub fn install_versions(
         &mut self,
-        config: &Config,
         versions: Vec<ToolVersion>,
         mpr: &MultiProgressReport,
         opts: &InstallOptions,
     ) -> Result<()> {
-        if versions.is_empty() {
-            return Ok(());
-        }
-        let settings = Settings::try_get()?;
-        let queue: Vec<_> = versions
-            .into_iter()
-            .group_by(|v| v.plugin_name.clone())
-            .into_iter()
-            .map(|(pn, v)| (config.get_or_create_plugin(&pn), v.collect_vec()))
-            .collect();
-        for (t, _) in &queue {
-            if !t.is_installed() {
-                t.ensure_installed(mpr, false)?;
-            }
-        }
-        let queue = Arc::new(Mutex::new(queue));
-        let raw = opts.raw || settings.raw;
-        let jobs = match raw {
-            true => 1,
-            false => opts.jobs.unwrap_or(settings.jobs),
-        };
-        thread::scope(|s| {
-            (0..jobs)
-                .map(|_| {
-                    let queue = queue.clone();
-                    let ts = &*self;
-                    s.spawn(move || {
-                        let next_job = || queue.lock().unwrap().pop();
-                        while let Some((t, versions)) = next_job() {
-                            for tv in versions {
-                                let prefix = format!("{}", style(&tv).cyan().for_stderr());
-                                let ctx = InstallContext {
-                                    ts,
-                                    tv: tv.request.resolve(
-                                        t.as_ref(),
-                                        tv.opts.clone(),
-                                        opts.latest_versions,
-                                    )?,
-                                    pr: mpr.add(&prefix),
-                                    raw,
-                                    force: opts.force,
-                                };
-                                t.install_version(ctx)?;
-                            }
-                        }
-                        Ok(())
-                    })
-                })
-                .collect_vec()
-                .into_iter()
-                .map(|t| t.join().unwrap())
-                .collect::<Result<Vec<()>>>()
-        })?;
-        self.resolve(config);
-        shims::reshim(config, self)?;
-        runtime_symlinks::rebuild(config)
+        Installer::new(self).with_mpr(mpr).install(versions, opts)
     }
     pub fn list_missing_versions(&self) -> Vec<ToolVersion> {
         self.list_current_versions()

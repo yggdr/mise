@@ -45,7 +45,7 @@ impl Env {
             raw: self.raw,
             latest_versions: false,
         };
-        ts.install_arg_versions(config, &opts)?;
+        ts.install_arg_versions(&opts)?;
 
         if self.json {
             self.output_json(config, ts)
