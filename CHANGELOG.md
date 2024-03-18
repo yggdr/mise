@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2024.3.7](https://github.com/jdx/mise/compare/v2024.3.6..v2024.3.7) - 2024-03-18
+
+### 📚 Documentation
+
+- **(changelog)** improve styling - [403033d](https://github.com/jdx/mise/commit/403033d269f88aa0c1e571e5613231eca84fbaac) - [@jdx](https://github.com/jdx)
+- **(changelog)** improve styling - [cf4811b](https://github.com/jdx/mise/commit/cf4811b0cfa16d7c002e155539eac7a8d5c3912a) - [@jdx](https://github.com/jdx)
+
+### ⚙️ Miscellaneous Tasks
+
+- **(release-plz)** use different bot email - [59b814f](https://github.com/jdx/mise/commit/59b814fae7eedd6565286a6865b6539e2c058a36) - [@jdx](https://github.com/jdx)
+- **(release-plz)** sign release git tags - [8ce5d37](https://github.com/jdx/mise/commit/8ce5d371515d287b8e5a5ccdbddeafa6e5d18952) - [@jdx](https://github.com/jdx)
+- **(test)** run all e2e tests on the release pr - [f21c84b](https://github.com/jdx/mise/commit/f21c84b5683e986b93cf2f3f16c120a7168aacba) - [@jdx](https://github.com/jdx)
+- **(test)** run all e2e tests on the release pr - [cf19dc5](https://github.com/jdx/mise/commit/cf19dc5eac9245a780a9135f7483e431ef686f69) - [@jdx](https://github.com/jdx)
+- **(test)** skip aur/aur-bin on release PR - [9ddb424](https://github.com/jdx/mise/commit/9ddb424c133452d4cb1e4304c263ff74ca65811b) - [@jdx](https://github.com/jdx)
+
 ## [2024.3.6](https://github.com/jdx/mise/compare/v2024.3.2..v2024.3.6) - 2024-03-17
 
 ### 🚀 Features
